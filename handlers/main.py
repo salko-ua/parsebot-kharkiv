@@ -8,7 +8,10 @@ from handlers.parser import get_data
 # ===========================start============================
 async def start(message: types.Message):
     await message.answer(
-        f"Вітаю {message.from_user.full_name}! 👏\nЦей бот призначений для швидкого парсингу\nі створення постів у telegram з olx\nПриємного користування 😁"
+        f"Вітаю {message.from_user.full_name}! 👏\n"
+        "Цей бот призначений для швидкого парсингу і створення постів у telegram з OLX.ua\n"
+        "Приємного користування 😁",
+        disable_web_page_preview=True,
     )
 
 
@@ -16,9 +19,9 @@ async def start(message: types.Message):
 async def main(message: types.Message):
     try:
         await get_data(message)
-    except:
+    except Exception:
         await message.answer(
-            "Виникла помилка ❌\nСторінку не було запарсено",
+            "Виникла помилка ❌\nСторінку не вдалося обробити",
             reply_markup=types.ReplyKeyboardRemove(),
         )
 
@@ -26,7 +29,8 @@ async def main(message: types.Message):
 # ===========================Всі повідомлення============================
 async def all_message(message: types.Message):
     await message.answer(
-        "🔴 Вибачте, але мені потрібне тільке\nпосилання на сторінку olx.ua з нерухомістю.\nтакого типу https://www.olx.ua/....",
+        "🔴 Вибачте, але мені потрібне тільки посилання на сторінку olx.ua з нерухомістю.\n"
+        "У форматі https://www.olx.ua/...",
         disable_web_page_preview=True,
     )
 

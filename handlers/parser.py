@@ -17,7 +17,7 @@ async def get_url(url):
 async def get_photo(soup: BeautifulSoup):
     photo = soup.find("div", class_="swiper-wrapper").find_all("img")
 
-    list_src_photo = []  # список scr фото
+    list_src_photo = []  # список src фото
     for src in photo:
         list_src_photo.append(src.get("src"))
 
@@ -34,7 +34,7 @@ async def get_photo(soup: BeautifulSoup):
 # Отримую опис
 async def get_caption(soup: BeautifulSoup):
     # Знаходження опису (теги на олх)
-    caption = soup.find("ul", class_="css-sfcl1s").find_all("p")
+    caption = soup.find("ul", class_="css-sfcl1s").find_all("p")  # TODO do not use css
     list_words_caption = {}
     need = [
         "Количество комнат:",
@@ -71,7 +71,7 @@ async def get_caption(soup: BeautifulSoup):
     get_tegs_money = await tegs_select(find_money_int)
 
     # Знаходження опису на olx
-    caption_text = soup.find("div", class_="css-bgzo2k er34gjf0").text
+    caption_text = soup.find("div", class_="css-bgzo2k er34gjf0").text  # TODO do not use css
 
     if len(caption_text) > 800:
         caption_text = caption_text[0:800]
