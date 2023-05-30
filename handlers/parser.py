@@ -87,7 +87,7 @@ async def get_caption(soup: BeautifulSoup):
 
 Описание : {caption_text}
 
-#{count_room}ККВ #{get_tegs_money}
+#{count_room}ККВ #{get_tegs_money} #
 
 Связь тут:
 Написать ✍️ @realtor_057 
