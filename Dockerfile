@@ -12,7 +12,6 @@ RUN pip install --no-cache-dir -U pip && \
     pip --no-cache-dir install -r requirements.txt
 
 COPY . .
-VOLUME ./data/
 
 RUN chown -R 5000:5000 /app
 USER container
