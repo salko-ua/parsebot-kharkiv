@@ -1,9 +1,11 @@
 import re
-import requests
 
-from create_bot import bot
+import requests
 from aiogram import types
 from bs4 import BeautifulSoup
+
+from create_bot import bot
+
 
 async def get_url(url):
     response = requests.get(url)

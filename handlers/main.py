@@ -1,9 +1,8 @@
 from aiogram import types
+from aiogram.dispatcher import Dispatcher
+from aiogram.dispatcher.filters import Text
 
 from handlers.parser import get_data
-from aiogram.dispatcher import Dispatcher
-
-from aiogram.dispatcher.filters import Text
 
 
 # ===========================start============================
