@@ -1,10 +1,11 @@
 # import
 import os
 
+from aiogram.utils.executor import start_polling
+
 # from import
 from create_bot import dp
 from handlers import main
-from aiogram.utils.executor import start_polling
 
 
 async def register_handlers():
@@ -25,5 +26,5 @@ def start_bot():
         dispatcher=dp,
         on_startup=on_startup,
         on_shutdown=on_shutdown,
-        skip_updates=False
+        skip_updates=False,
     )
