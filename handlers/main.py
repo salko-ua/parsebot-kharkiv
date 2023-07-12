@@ -21,7 +21,7 @@ async def main(message: types.Message):
         await get_data(message)
     except Exception:
         await message.answer(
-            "Виникла помилка ❌\nСторінку не вдалося обробити",
+            f"Виникла помилка ❌\nСторінку не вдалося обробити\n{Exception}",
             reply_markup=types.ReplyKeyboardRemove(),
         )
 
