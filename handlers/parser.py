@@ -64,7 +64,7 @@ async def get_caption(soup: BeautifulSoup):
     flour = f"{flour_have}/{floor_everything}"
 
     # Знаходження грошей
-    money = soup.find("h3").text
+    money = soup.find("h2").text
 
     without_space = "".join(money.split())
     find_money_int = int((re.search(r"\d+", without_space)).group())
