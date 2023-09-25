@@ -64,14 +64,17 @@ async def get_caption(soup: BeautifulSoup):
     flour = f"{flour_have}/{floor_everything}"
 
     # Знаходження грошей
-    money = soup.find("h3", class_="css-1twl9tf").text
+    try:
+        money = soup.find("h3").text
+    except:
+        money = soup.find("h4").text
 
     without_space = "".join(money.split())
     find_money_int = int((re.search(r"\d+", without_space)).group())
     get_tegs_money = await tegs_select(find_money_int)
 
-    # Знаходження опису на olx
-    caption_text = soup.find("div", class_="css-bgzo2k er34gjf0").text  # TODO do not use css
+    # Знаходження опису на olx 
+    caption_text = soup.find("div", class_="css-1t507yq er34gjf0").text  # TODO do not use css
 
     if len(caption_text) > 800:
         caption_text = caption_text[0:800]
