@@ -17,14 +17,13 @@ async def start(message: types.Message):
 
 # ===========================Посилання============================
 async def main(message: types.Message):
-    await get_data(message)
-"""    try:
+    try:
         await get_data(message)
     except:
         await message.answer(
             "Виникла помилка ❌\nСторінку не вдалося обробити\n",
             reply_markup=types.ReplyKeyboardRemove(),
-        )"""
+        )
 
 
 # ===========================Всі повідомлення============================
