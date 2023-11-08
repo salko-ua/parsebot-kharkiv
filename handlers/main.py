@@ -26,7 +26,6 @@ async def start(message: types.Message):
 
 @router.message(F.text.startswith("https://www.olx.ua/"))
 async def main(message: types.Message, state: FSMContext):
-    await message.delete()
     try:
         await get_data(message, state)
     except Exception as ex:
@@ -88,7 +87,7 @@ async def repost_to_channel(query: types.CallbackQuery, state: FSMContext):
     full_caption = Information.get_full_caption(caption_info, caption_money, caption_user, caption_tag, caption_communication)
 
     await state.clear()
-    await query.message.delete()
+    await query.message.edit_reply_markup(reply_markup=None)
 
     media_messages = await bot.send_media_group(-1001489053011, media=media_group)
     await bot.edit_message_caption(chat_id=-1001489053011, message_id=media_messages[0].message_id,caption=full_caption)
