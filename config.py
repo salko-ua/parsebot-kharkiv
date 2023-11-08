@@ -1,3 +1,3 @@
 import os
 
-TOKEN = os.environ["BOT_TOKEN"]
+TOKEN = os.environ.get("BOT_TOKEN", "")

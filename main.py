@@ -1,30 +1,11 @@
-# import
-import os
-
-from aiogram.utils.executor import start_polling
-
-# from import
-from create_bot import dp
+from create_bot import bot, dp
 from handlers import main
 
-
 async def register_handlers():
-    main.register_handler_main(dp)
+    dp.include_router(main.router)
 
-
-async def on_startup(dp):
-    await register_handlers()
-    print("Bot Online")
-
-
-async def on_shutdown(dp):
-    print("Bot Offline")
-
-
-def start_bot():
-    start_polling(
-        dispatcher=dp,
-        on_startup=on_startup,
-        on_shutdown=on_shutdown,
-        skip_updates=False,
-    )
+async def start_bot():
+     await register_handlers()
+     await bot.delete_webhook(drop_pending_updates=True)
+     await dp.start_polling(bot)
+     print("Bot Online")

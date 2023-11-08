@@ -1,9 +1,6 @@
 # from import
-from aiogram import Bot
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.dispatcher import Dispatcher
-
+from aiogram import Bot, Dispatcher
 from config import TOKEN
 
-bot = Bot(TOKEN)
-dp = Dispatcher(bot, storage=MemoryStorage())
+bot = Bot(token=TOKEN, parse_mode="HTML")
+dp = Dispatcher()
