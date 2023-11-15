@@ -28,12 +28,11 @@ async def start(message: types.Message):
 async def main(message: types.Message, state: FSMContext):
     try:
         await get_data(message, state)
-    except Exception as ex:
+    except:
         await message.answer(
             f"Виникла помилка ❌\nСторінку не вдалося обробити\n",
             reply_markup=types.ReplyKeyboardRemove(),
         )
-        await bot.send_message(chat_id=2138964363, text=ex)
 
 @router.callback_query(F.data == "Змінити опис ✏️", Caption.control)
 async def edit_caption(query: types.CallbackQuery, state: FSMContext):

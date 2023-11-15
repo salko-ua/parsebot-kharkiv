@@ -144,16 +144,19 @@ class Information():
                     name_metro = metro
                     break
 
-        for metro in metros_russian:
-            if metro in caption_header:
-                name_metro = metro
-                break
-            
-        if not name_metro:
-            for metro in metro_ukrainian:
+        if name_metro == "":
+
+            for metro in metros_russian:
                 if metro in caption_header:
                     name_metro = metro
                     break
+
+            if not name_metro:
+                for metro in metro_ukrainian:
+                    if metro in caption_header:
+                        name_metro = metro
+                        break
+
 
         count_room, count_area, flour = Information.get_tag(soup)
         money, teg_money = Information.get_money(soup)
