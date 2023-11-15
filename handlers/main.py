@@ -16,7 +16,7 @@ class Caption(StatesGroup):
     edit_tags = State()
 
 # ===========================start============================
-@router.message(Command("sadmin"))
+@router.message(Command("start"))
 async def start(message: types.Message):
     await message.answer(
         f"Вітаю {message.from_user.full_name}! 👏\n"
