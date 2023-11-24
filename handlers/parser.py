@@ -76,7 +76,7 @@ class Information():
         without_space = "".join(money.text.split())
         price = int((re.search(r"\d+", without_space)).group())
 
-        return money.text, get_tags_for_money(price) 
+        return price, get_tags_for_money(price) 
 
     def get_caption(soup: BeautifulSoup) -> str:
         # parsing caption from the page
