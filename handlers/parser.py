@@ -183,19 +183,17 @@ class Information():
 
 # Отримання тегу залежно від ціни
 def get_tags_for_money(price):
-    if 0 <= price <= 1999:
-        return "0-2000грн"
-    elif 2000 <= price <= 4999:
+    if 2000 <= price <= 5000:
         return "20005000грн"
-    elif 5000 <= price <= 6999:
+    elif 5000 <= price <= 7000:
         return "50007000грн"
-    elif 7000 <= price <= 8999:
+    elif 7000 <= price <= 9000:
         return "70009000грн"
-    elif 9000 <= price <= 11999:
+    elif 9000 <= price <= 12000:
         return "900012000грн"
-    elif 12000 <= price <= 13999:
+    elif 12000 <= price <= 14000:
         return "1200014000грн"
-    elif 14000 <= price <= 14999:
+    elif 14000 <= price <= 15000:
         return "1400015000грн"
     elif price >= 15000:
         return "Выше15000грн"
