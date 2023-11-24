@@ -100,8 +100,8 @@ class Information():
         return caption_header.text
 
     def create_pieces_caption(soup: BeautifulSoup) -> [str, str, str, str]:
-        caption_text = Information.get_caption(soup)
-        caption_header = Information.get_header(soup)
+        caption_text = Information.get_caption(soup).title()
+        caption_header = Information.get_header(soup).title()
 
         metros_russian = ["Холодная Гора", "Южный вокзал",
                   "Центральный рынок", "Площадь Конституции",
@@ -154,6 +154,8 @@ class Information():
                 if metro in caption_header:
                     name_metro = metro
                     break
+
+        
 
 
         count_room, count_area, flour = Information.get_tag(soup)
