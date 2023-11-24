@@ -165,7 +165,7 @@ class Information():
             f"🏢Этаж: {flour}\n"
             f"🔑Площадь: {count_area}м2\n"
             f"Ⓜ️Метро: {name_metro}\n")
-        caption_money = f"💳️{money}"
+        caption_money = f"💳️{money} грн"
         caption_user = (f"Описание: {caption_text}")
         caption_tag = (f"#{count_room}ККВ #{teg_money}")
         caption_communication = (f"\n\nСвязь тут:\n"
