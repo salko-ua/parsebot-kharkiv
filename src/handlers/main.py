@@ -10,10 +10,12 @@ from src.handlers.keyboard import post_kb, tags_kb, utilities_kb
 
 router = Router()
 
+
 class Caption(StatesGroup):
     control = State()
     edit_caption = State()
     edit_tags = State()
+
 
 # ===========================start============================
 @router.message(Command("start"))
@@ -23,6 +25,7 @@ async def start(message: types.Message):
         "Цей бот призначений для швидкого парсингу і створення постів у telegram з OLX.ua\n"
         "Приємного користування 😁",
         disable_web_page_preview=True)
+
 
 @router.message(F.text.startswith("https://www.olx.ua/"))
 async def main(message: types.Message, state: FSMContext):
@@ -34,6 +37,7 @@ async def main(message: types.Message, state: FSMContext):
             reply_markup=types.ReplyKeyboardRemove(),
         )
 
+
 @router.callback_query(F.data == "Змінити опис ✏️", Caption.control)
 async def edit_caption(query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
@@ -41,16 +45,19 @@ async def edit_caption(query: types.CallbackQuery, state: FSMContext):
     await query.message.delete()
     await query.message.answer(f"Ось текст який ви можете редагувати: \n{caption_user}")
     await state.set_state(Caption.edit_caption)
-    
+
+
 @router.callback_query(F.data == "Змінити теги 🧷", Caption.control)
 async def edit_caption(query: types.CallbackQuery, state: FSMContext):
     await query.message.edit_reply_markup(reply_markup=await tags_kb())
     await state.set_state(Caption.edit_tags)
 
+
 @router.callback_query(F.data == "🔙 Назад", Caption.edit_tags)
 async def tags_baks(query: types.CallbackQuery, state: FSMContext):
     await query.message.edit_reply_markup(reply_markup=await post_kb())
     await state.set_state(Caption.control)
+
 
 @router.callback_query(Caption.edit_tags)
 async def tags_baks(query: types.CallbackQuery, state: FSMContext):
@@ -73,7 +80,6 @@ async def tags_baks(query: types.CallbackQuery, state: FSMContext):
     await query.message.edit_caption(caption=full_caption, reply_markup=await post_kb())
 
 
-
 @router.callback_query(F.data == "Репост в канал ▶️", Caption.control)
 async def repost_to_channel(query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
@@ -90,7 +96,6 @@ async def repost_to_channel(query: types.CallbackQuery, state: FSMContext):
 
     media_messages = await bot.send_media_group(-1001489053011, media=media_group)
     await bot.edit_message_caption(chat_id=-1001489053011, message_id=media_messages[0].message_id,caption=full_caption)
-
 
 
 @router.callback_query(F.data == "➕➖ ком послуги", Caption.control)
@@ -168,6 +173,7 @@ async def utilities(query: types.CallbackQuery, state: FSMContext):
             pattern_light =  r'\+світло'
             await delete_utilities(query, pattern_light, money, state)  
 
+
 @router.message(Caption.edit_caption)
 async def edit_caption_completed(message: types.Message, state: FSMContext):
     await state.update_data(caption_user=message.text) # caption user (Update data after get data)
@@ -184,6 +190,7 @@ async def edit_caption_completed(message: types.Message, state: FSMContext):
     full_caption = Information.get_full_caption(caption_info, caption_money, caption_user, caption_tag, caption_communication)
 
     await message.answer_photo(caption=full_caption, photo=first_photo, reply_markup=await post_kb())
+
 
 @router.message()
 async def all_message(message: types.Message):
