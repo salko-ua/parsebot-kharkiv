@@ -1,12 +1,12 @@
 from aiogram import F, Router, types
 from aiogram.filters import Command
-from create_bot import bot
+from src.create_bot import bot
 from aiogram.filters.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 import re
 
-from handlers.parser import get_data, Information
-from handlers.keyboard import post_kb, tags_kb, utilities_kb
+from src.handlers.parser import get_data, Information
+from src.handlers.keyboard import post_kb, tags_kb, utilities_kb
 
 router = Router()
 

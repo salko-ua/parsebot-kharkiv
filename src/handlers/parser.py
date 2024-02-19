@@ -2,9 +2,10 @@ import re
 import requests
 from aiogram import types
 from bs4 import BeautifulSoup
-from handlers import main
-from handlers.keyboard import post_kb
+from src.handlers import main
+from src.handlers.keyboard import post_kb
 from aiogram.fsm.context import FSMContext
+
 
 def get_url(url):
     response = requests.get(url)

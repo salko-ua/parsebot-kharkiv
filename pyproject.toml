@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "parsebot"
+version = "1.1"
+description = "Bot for parsing olx posts and sending that to telegram"
+authors = ["Your Name <you@example.com>"]
+license = "MIT License"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+aiogram = "^3.4.1"
+apykuma = "^1.2.0"
+requests = "^2.31.0"
+translate = "^3.6.1"
+beautifulsoup4 = "^4.12.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
