@@ -10,7 +10,7 @@ RUN apt-get update && \
     apt-get install curl -y --no-install-recommends && \
     curl -sSL https://install.python-poetry.org | python -
 COPY poetry.lock pyproject.toml ./
-RUN poetry install --only main,docker
+RUN poetry install
 
 
 FROM python:3.12-slim AS base
