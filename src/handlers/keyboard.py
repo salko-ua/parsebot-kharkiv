@@ -19,6 +19,7 @@ async def post_kb() -> InlineKeyboardMarkup:
 
     return builder.adjust(2).as_markup(resize_keyboard=True)
 
+
 async def utilities_kb(name) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
@@ -33,6 +34,7 @@ async def utilities_kb(name) -> InlineKeyboardMarkup:
         builder.add(InlineKeyboardButton(text=button, callback_data=button))
 
     return builder.adjust(2).as_markup(resize_keyboard=True)
+
 
 async def tags_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
