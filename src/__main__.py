@@ -9,7 +9,7 @@ from src.config import TOKEN
 
 
 async def start_bot():
-    bot = Bot(token=TOKEN, parse_mode="HTML")
+    bot = Bot(token=TOKEN)
     dp = Dispatcher()
 
     dp.include_router(main.router)
