@@ -17,7 +17,6 @@ class Caption(StatesGroup):
     edit_tags = State()
 
 
-# ===========================start============================
 @router.message(Command("start"))
 async def start(message: types.Message):
     await message.answer(
@@ -66,7 +65,7 @@ async def tags_baks(query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     tags = data["caption_tag"]
 
-    tags = tags + f' #{query.data} '
+    tags = tags + f' 
 
     await state.update_data(caption_tag=tags)
 
@@ -140,11 +139,11 @@ async def utilities(query: types.CallbackQuery, state: FSMContext):
       
         await query.message.edit_caption(caption=full_caption, reply_markup=await utilities_kb(query.data))
 
-    # geting caption money
+    
     data = await state.get_data()
     money = data["caption_money"]
     
-    # cheking exists utilitie
+    
     utilitie = await is_utilities(money)
 
     if not utilitie:
@@ -176,7 +175,7 @@ async def utilities(query: types.CallbackQuery, state: FSMContext):
 
 @router.message(Caption.edit_caption)
 async def edit_caption_completed(message: types.Message, state: FSMContext):
-    await state.update_data(caption_user=message.text) # caption user (Update data after get data)
+    await state.update_data(caption_user=message.text) 
     data = await state.get_data()
     first_photo = data["first_photo"]
     caption_info = data["caption_info"]
