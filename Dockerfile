@@ -1,4 +1,4 @@
-FROM python:3.11-slim AS poetry
+FROM python:3.12-slim AS poetry
 
 ENV PATH "/root/.local/bin:${PATH}"
 ENV PYTHONUNBUFFERED 1
@@ -12,7 +12,7 @@ COPY poetry.lock pyproject.toml ./
 RUN poetry export --no-interaction -o requirements.txt --without-hashes --only main,docker
 
 
-FROM python:3.11-slim AS base
+FROM python:3.12-slim AS base
 
 ENV PYTHONPATH "/app"
 
