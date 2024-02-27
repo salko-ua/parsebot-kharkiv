@@ -63,7 +63,7 @@ async def tags_baks(query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     tags = data["caption_tag"]
 
-    tags = tags + f"{query.data}"
+    tags = tags + f" #{query.data} "
 
     await state.update_data(caption_tag=tags)
 
