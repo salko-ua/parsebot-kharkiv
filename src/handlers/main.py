@@ -97,7 +97,7 @@ async def repost_to_channel(query: types.CallbackQuery, state: FSMContext):
     media_messages = await query.message.bot.send_media_group(
         -1001489053011, media=media_group
     )
-    await query.message.edit_message_caption(
+    await query.message.edit_caption(
         chat_id=-1001489053011,
         message_id=media_messages[0].message_id,
         caption=full_caption,
