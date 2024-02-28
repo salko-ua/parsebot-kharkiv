@@ -90,15 +90,13 @@ async def repost_to_channel(query: types.CallbackQuery, state: FSMContext):
     full_caption = get_full_caption(
         caption_info, caption_money, caption_user, caption_tag, caption_communication
     )
-
     await state.clear()
     await query.message.edit_reply_markup(reply_markup=None)
 
-    media_messages = await query.message.bot.send_media_group(
-        -1001489053011, media=media_group
+    media_messages: list[types.Message] = await query.message.bot.send_media_group(
+        chat_id=-1001489053011, media=media_group
     )
-    await media_messages.edit_caption(caption=full_caption)
-
+    await media_messages[0].edit_caption(caption=full_caption)
 
 
 @router.callback_query(F.data == "➕➖ ком послуги", Caption.control)
