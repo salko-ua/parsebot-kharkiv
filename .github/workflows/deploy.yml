@@ -37,4 +37,6 @@ jobs:
 
     - name: Activate update script
       if: github.event_name != 'pull_request'
-      run: curl -L ${{ secrets.DEPLOY_URL }}
+      run: |
+        curl -X POST -H "Content-Type: application/json" -d '{"token":"${{ secrets.DEPLOY_TOKEN }}", "project": "parsebotforsale"}' https://auto-update.perchun.it
+
