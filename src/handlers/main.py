@@ -1,4 +1,5 @@
 from aiogram import F, Router
+from aiogram.utils.media_group import MediaGroupBuilder
 from aiogram.filters import Command
 from aiogram.filters.state import State, StatesGroup
 
@@ -81,10 +82,21 @@ async def tags_baks(query: types.CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "Репост в канал ▶️", Caption.control)
 async def repost_to_channel(query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
-    media_group = data["all_photo"]
+    media_groups: MediaGroupBuilder = data["all_photo"]
+    caption_info = data["caption_info"]
+    caption_money = data["caption_money"]
+    caption_user = data["caption_user"]
+    caption_tag = data["caption_tag"]
+    caption_communication = data["caption_communication"]
+    full_caption = get_full_caption(
+        caption_info, caption_money, caption_user, caption_tag, caption_communication
+    )
+    media_groups.caption = full_caption
+
     await state.clear()
     await query.message.edit_reply_markup(reply_markup=None)
 
+    media_group = media_groups.build()
     new_media_group = media_group.copy()
 
     for i in range(len(media_group)):

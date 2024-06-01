@@ -14,7 +14,7 @@ def get_url(url):
     return soup
 
 
-def get_photo(soup: BeautifulSoup, caption: str) -> [list, types.URLInputFile]:
+def get_photo(soup: BeautifulSoup, caption: str) -> [MediaGroupBuilder, types.URLInputFile]:
     photo = soup.find("div", class_="swiper-wrapper").find_all("img")
 
     list_src_photo = []
@@ -31,7 +31,7 @@ def get_photo(soup: BeautifulSoup, caption: str) -> [list, types.URLInputFile]:
 
     first_photo = types.URLInputFile(str(list_src_photo[0]))
 
-    return media_group.build(), first_photo
+    return media_group, first_photo
 
 
 def get_tag(soup: BeautifulSoup) -> [int, int, str]:
