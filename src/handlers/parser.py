@@ -1,6 +1,7 @@
 import re
 import requests
 from aiogram import types
+from aiogram.utils.media_group import MediaGroupBuilder
 from bs4 import BeautifulSoup
 from src.handlers import main
 from src.handlers.keyboard import post_kb
@@ -13,10 +14,10 @@ def get_url(url):
     return soup
 
 
-def get_photo(soup: BeautifulSoup) -> [list, types.URLInputFile]:
+def get_photo(soup: BeautifulSoup, caption: str) -> [list, types.URLInputFile]:
     photo = soup.find("div", class_="swiper-wrapper").find_all("img")
 
-    list_src_photo = []  # список src фото
+    list_src_photo = []
 
     for src in photo:
         list_src_photo.append(src.get("src"))
@@ -24,13 +25,13 @@ def get_photo(soup: BeautifulSoup) -> [list, types.URLInputFile]:
     if len(list_src_photo) > 10:
         del list_src_photo[10:]
 
-    media_group = []
+    media_group = MediaGroupBuilder(caption=caption)
     for photo_url in list_src_photo:
-        media_group.append(types.InputMediaPhoto(media=photo_url))
+        media_group.add_photo(media=photo_url)
 
     first_photo = types.URLInputFile(str(list_src_photo[0]))
 
-    return media_group, first_photo
+    return media_group.build(), first_photo
 
 
 def get_tag(soup: BeautifulSoup) -> [int, int, str]:
@@ -253,7 +254,6 @@ def get_tags_for_money(price):
 # Отримання всіх даних і запуск надсилання
 async def get_data(message: types.Message, state: FSMContext):
     soup: BeautifulSoup = get_url(message.text)
-    all_photo, first_photo = get_photo(soup)
     (caption_info, caption_money, caption_user, caption_tag, caption_communication) = (
         create_pieces_caption(soup)
     )
@@ -261,8 +261,9 @@ async def get_data(message: types.Message, state: FSMContext):
     all_caption = get_full_caption(
         caption_info, caption_money, caption_user, caption_tag, caption_communication
     )
-
+    all_photo, first_photo = get_photo(soup, all_caption)
     # storage of the necessary files
+
     await state.set_state(main.Caption.control)
     await state.update_data(
         all_photo=all_photo,

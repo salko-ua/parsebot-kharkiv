@@ -26,13 +26,13 @@ async def start(message: types.Message):
 
 @router.message(F.text.startswith("https://www.olx.ua/"))
 async def main(message: types.Message, state: FSMContext):
-    try:
-        await get_data(message, state)
-    except Exception:
-        await message.answer(
-            f"Виникла помилка ❌\nСторінку не вдалося обробити\n",
-            reply_markup=types.ReplyKeyboardRemove(),
-        )
+    # try:
+    await get_data(message, state)
+    # except Exception:
+    #     await message.answer(
+    #         f"Виникла помилка ❌\nСторінку не вдалося обробити\n",
+    #         reply_markup=types.ReplyKeyboardRemove(),
+    #     )
 
 
 @router.callback_query(F.data == "Змінити опис ✏️", Caption.control)
@@ -82,21 +82,20 @@ async def tags_baks(query: types.CallbackQuery, state: FSMContext):
 async def repost_to_channel(query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     media_group = data["all_photo"]
-    caption_info = data["caption_info"]
-    caption_money = data["caption_money"]
-    caption_user = data["caption_user"]
-    caption_tag = data["caption_tag"]
-    caption_communication = data["caption_communication"]
-    full_caption = get_full_caption(
-        caption_info, caption_money, caption_user, caption_tag, caption_communication
-    )
     await state.clear()
     await query.message.edit_reply_markup(reply_markup=None)
 
-    media_messages: list[types.Message] = await query.message.bot.send_media_group(
-        chat_id=-1001489053011, media=media_group
-    )
-    await media_messages[0].edit_caption(caption=full_caption)
+    new_media_group = media_group.copy()
+
+    for i in range(len(media_group)):
+        try:
+            message_photo = await query.message.bot.send_media_group(chat_id=-1001902595324, message_thread_id=805,
+                                                                     media=[media_group[i]])
+            await query.message.bot.delete_message(message_id=message_photo[0].message_id, chat_id=-1001902595324)
+        except Exception as e:
+            new_media_group.remove(media_group[i])
+
+    await query.message.bot.send_media_group(chat_id=-1001489053011, media=new_media_group)
 
 
 @router.callback_query(F.data == "➕➖ ком послуги", Caption.control)
@@ -118,7 +117,7 @@ async def utilities(query: types.CallbackQuery, state: FSMContext):
             return ""
 
     async def delete_utilities(
-        query: types.CallbackQuery, value: str, price: str, state: FSMContext
+            query: types.CallbackQuery, value: str, price: str, state: FSMContext
     ):
         money: str = re.sub(value, "", price, flags=re.IGNORECASE)
         await state.update_data(caption_money=money)
@@ -135,7 +134,7 @@ async def utilities(query: types.CallbackQuery, state: FSMContext):
         )
 
     async def add_utilities(
-        query: types.CallbackQuery, pattern: str, money: str, state: FSMContext
+            query: types.CallbackQuery, pattern: str, money: str, state: FSMContext
     ):
         money: str = money + pattern
         await state.update_data(caption_money=money)
