@@ -57,10 +57,23 @@ def get_tag(soup: BeautifulSoup) -> [int, int, str]:
             if need_word in tag.text:
                 all_tag_text.append(tag.text)
 
-    count_room = int((re.search(r"\d+", all_tag_text[0])).group())
-    count_area = int((re.search(r"\d+", all_tag_text[1])).group())
-    flour_have = int((re.search(r"\d+", all_tag_text[2])).group())
-    flour_everything = int((re.search(r"\d+", all_tag_text[3])).group())
+    print(all_tag_text)
+    try:
+        count_room = int((re.search(r"\d+", all_tag_text[0])).group())
+    except:
+        count_room = " "
+    try:
+        count_area = int((re.search(r"\d+", all_tag_text[1])).group())
+    except:
+        count_area = " "
+    try:
+        flour_have = int((re.search(r"\d+", all_tag_text[2])).group())
+    except:
+        flour_have = " "
+    try:
+        flour_everything = int((re.search(r"\d+", all_tag_text[3])).group())
+    except:
+        flour_everything = " "
     flour = f"{flour_have}/{flour_everything}"
 
     return count_room, count_area, flour
