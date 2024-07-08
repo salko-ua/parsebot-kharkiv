@@ -14,7 +14,9 @@ def get_url(url):
     return soup
 
 
-def get_photo(soup: BeautifulSoup, caption: str) -> [MediaGroupBuilder, types.URLInputFile]:
+def get_photo(
+    soup: BeautifulSoup, caption: str
+) -> [MediaGroupBuilder, types.URLInputFile]:
     photo = soup.find("div", class_="swiper-wrapper").find_all("img")
 
     list_src_photo = []
@@ -100,10 +102,10 @@ def get_money(soup: BeautifulSoup) -> [str, str]:
 
 def get_caption(soup: BeautifulSoup) -> str:
     # parsing caption from the page
-    caption_text = soup.find("div", class_="css-1t507yq er34gjf0")
+    caption_text = soup.find("div", class_="css-1t507yq")
 
     if not caption_text:
-        return "Описание не найдено"
+        return "Опис не знайдено. Повідомте розробника про помилку."
 
     if len(caption_text.text) > 800:
         return caption_text.text[0:800]
@@ -113,10 +115,10 @@ def get_caption(soup: BeautifulSoup) -> str:
 
 def get_header(soup: BeautifulSoup) -> str | None:
     # parsing caption from the page
-    caption_header = soup.find("h4", class_="css-1juynto")
+    caption_header = soup.find("h4", class_="css-1kc83jo")
 
     if not caption_header:
-        return None
+        return "Заголовок не знайдено. Повідомте розробника про помилку."
 
     return caption_header.text
 
