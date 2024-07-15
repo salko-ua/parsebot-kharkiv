@@ -123,9 +123,72 @@ def get_header(soup: BeautifulSoup) -> str | None:
     return caption_header.text
 
 
+def delete_words(text: str, words_to_remove: list) -> str:
+    # Використовуємо регулярний вираз для визначення слова з можливими крапками
+    pattern = re.compile(
+        r"\b(?:" + "|".join(map(re.escape, words_to_remove)) + r")\b", re.IGNORECASE
+    )
+    print(text)
+
+    # Замінюємо відповідні слова на порожні рядки
+    result = pattern.sub("", text)
+    print(result)
+
+    return result
+
+
 def create_pieces_caption(soup: BeautifulSoup) -> [str, str, str, str]:
-    caption_text = get_caption(soup).title()
-    caption_header = get_header(soup).title()
+    words = [
+        "Від",
+        "От",
+        "я собственник",
+        "я власнник",
+        "посредников",
+        "своя",
+        "свою",
+        "риелтор",
+        "риелторов",
+        "агентство",
+        "агент",
+        "маклер",
+        "посредник",
+        "личную",
+        "хозяин",
+        "собственник",
+        "собственника",
+        "хозяина",
+        "хозяйка",
+        "без комиссии",
+        "агента",
+        "агентства",
+        "собственников",
+        "посередників",
+        "своя",
+        "свою",
+        "ріелтор",
+        "ріелторів",
+        "агентство",
+        "агент",
+        "маклер",
+        "посередник",
+        "посередник",
+        "особисту",
+        "власник",
+        "власника",
+        "власників",
+        "хазяїнахазяйка",
+        "хазяйка",
+        "особисту",
+        "без комісії",
+        "Без рієлторів",
+        "комісій",
+        "Без риелторов",
+        "комисий",
+        "комісіЇ",
+        "комисии",
+    ]
+    caption_text = delete_words(get_caption(soup), words)
+    caption_header = delete_words(get_header(soup), words)
 
     metros_russian = [
         "Холодная Гора",
@@ -194,43 +257,48 @@ def create_pieces_caption(soup: BeautifulSoup) -> [str, str, str, str]:
     ]
 
     name_metro = ""
-
+    print(name_metro)
     for metro in metros_russian:
-        if metro in caption_text:
+        print(metro, metro in caption_text)
+        if metro.lower() in caption_text.lower():
             name_metro = metro
             break
 
     if not name_metro:
+        print(metro, metro in caption_text)
         for metro in metro_ukrainian:
-            if metro in caption_text:
+            if metro.lower() in caption_text.lower():
                 name_metro = metro
                 break
 
     for metro in metros_russian:
-        if metro in caption_header:
+        print(metro, caption_header, metro in caption_header)
+        if metro.lower() in caption_header.lower():
             name_metro = metro
             break
 
     if not name_metro:
+        print(metro, caption_header, metro in caption_header)
         for metro in metro_ukrainian:
-            if metro in caption_header:
+            if metro.lower() in caption_header.lower():
                 name_metro = metro
                 break
+    print(name_metro)
 
     count_room, count_area, flour = get_tag(soup)
     money, teg_money = get_money(soup)
 
     caption_info = (
         f"🏡{count_room}к кв\n"
-        f"🏢Этаж: {flour}\n"
-        f"🔑Площадь: {count_area}м2\n"
+        f"🏢Поверх: {flour}\n"
+        f"🔑Площа: {count_area}м2\n"
         f"Ⓜ️Метро: {name_metro}\n"
     )
     caption_money = f"💳️{money} грн"
-    caption_user = f"Описание: {caption_text}"
+    caption_user = f"{caption_header}\n\nОпис: {caption_text}"
     caption_tag = f"#{count_room}ККВ #{teg_money}"
     caption_communication = (
-        f"\n\nСвязь тут:\n" f"Написать ✍️ @realtor_057\n" f"Позвонить ☎️ +380996643097"
+        f"\n\nЗв'язок тут:\n" f"Написати ✍️ @realtor_057\n" f"Подзвонити ☎️ +380996643097"
     )
 
     return caption_info, caption_money, caption_user, caption_tag, caption_communication
