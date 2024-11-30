@@ -5,6 +5,7 @@ from aiogram.utils.media_group import MediaGroupBuilder
 from bs4 import BeautifulSoup
 from src.handlers import main
 from src.handlers.keyboard import post_kb
+from src.handlers.dictionaries import words
 from aiogram.fsm.context import FSMContext
 
 
@@ -59,7 +60,7 @@ def get_tag(soup: BeautifulSoup) -> [int, int, str]:
             if need_word in tag.text:
                 all_tag_text.append(tag.text)
 
-    print(all_tag_text)
+
     try:
         count_room = int((re.search(r"\d+", all_tag_text[0])).group())
     except:
@@ -128,162 +129,18 @@ def delete_words(text: str, words_to_remove: list) -> str:
     pattern = re.compile(
         r"\b(?:" + "|".join(map(re.escape, words_to_remove)) + r")\b", re.IGNORECASE
     )
-    print(text)
+
 
     # Замінюємо відповідні слова на порожні рядки
     result = pattern.sub("", text)
-    print(result)
+
 
     return result
 
 
-def create_pieces_caption(soup: BeautifulSoup) -> [str, str, str, str]:
-    words = [
-        "Від",
-        "От",
-        "я собственник",
-        "я власнник",
-        "посредников",
-        "своя",
-        "свою",
-        "риелтор",
-        "риелторов",
-        "агентство",
-        "агент",
-        "маклер",
-        "посредник",
-        "личную",
-        "хозяин",
-        "собственник",
-        "собственника",
-        "хозяина",
-        "хозяйка",
-        "без комиссии",
-        "агента",
-        "агентства",
-        "собственников",
-        "посередників",
-        "своя",
-        "свою",
-        "ріелтор",
-        "ріелторів",
-        "агентство",
-        "агент",
-        "маклер",
-        "посередник",
-        "посередник",
-        "особисту",
-        "власник",
-        "власника",
-        "власників",
-        "хазяїнахазяйка",
-        "хазяйка",
-        "особисту",
-        "без комісії",
-        "Без рієлторів",
-        "комісій",
-        "Без риелторов",
-        "комисий",
-        "комісіЇ",
-        "комисии",
-    ]
+def create_pieces_caption(soup: BeautifulSoup) -> [list[str]]:
     caption_text = delete_words(get_caption(soup), words)
     caption_header = delete_words(get_header(soup), words)
-
-    metros_russian = [
-        "Холодная Гора",
-        "Южный вокзал",
-        "Центральный рынок",
-        "Площадь Конституции",
-        "Гагарина",
-        "Спортивная",
-        "Малышева",
-        "Турбоатом",
-        "Дворец Спорта",
-        "Армейская",
-        "Масельского",
-        "Тракторный завод",
-        "Индустриальная",
-        "Героев Труда",
-        "Студенческая",
-        "Барабашова",
-        "Киевская",
-        "Пушкинская",
-        "Университет",
-        "Исторический музей",
-        "Победа",
-        "Алексеевская",
-        "23 Августа",
-        "Ботанический сад",
-        "Научная",
-        "Госпром",
-        "Архитектора Бекетова",
-        "Защитников Украины",
-        "Метростроителей",
-        "Павлова",
-    ]
-
-    metro_ukrainian = [
-        "Холодна Гора",
-        "Південний вокзал",
-        "Центральний ринок",
-        "Площа Конституції",
-        "Гагаріна",
-        "Спортивна",
-        "Малишева",
-        "Турбоатом",
-        "Палац Спорту",
-        "Армійська",
-        "Масельського",
-        "Тракторний завод",
-        "Індустріальна",
-        "Героїв Праці",
-        "Студентська",
-        "Барабашова",
-        "Київська",
-        "Пушкінська",
-        "Університет",
-        "Історичний музей",
-        "Перемога",
-        "Олексіївська",
-        "23 Серпня",
-        "Ботанічний сад",
-        "Наукова",
-        "Держпром",
-        "Архітектора Бекетова",
-        "Захисників України",
-        "Метробудівників",
-        "Павлова",
-    ]
-
-    name_metro = ""
-    print(name_metro)
-    for metro in metros_russian:
-        print(metro, metro in caption_text)
-        if metro.lower() in caption_text.lower():
-            name_metro = metro
-            break
-
-    if not name_metro:
-        print(metro, metro in caption_text)
-        for metro in metro_ukrainian:
-            if metro.lower() in caption_text.lower():
-                name_metro = metro
-                break
-
-    for metro in metros_russian:
-        print(metro, caption_header, metro in caption_header)
-        if metro.lower() in caption_header.lower():
-            name_metro = metro
-            break
-
-    if not name_metro:
-        print(metro, caption_header, metro in caption_header)
-        for metro in metro_ukrainian:
-            if metro.lower() in caption_header.lower():
-                name_metro = metro
-                break
-    print(name_metro)
 
     count_room, count_area, flour = get_tag(soup)
     money, teg_money = get_money(soup)
@@ -292,8 +149,8 @@ def create_pieces_caption(soup: BeautifulSoup) -> [str, str, str, str]:
         f"🏡{count_room}к кв\n"
         f"🏢Поверх: {flour}\n"
         f"🔑Площа: {count_area}м2\n"
-        f"Ⓜ️Метро: {name_metro}\n"
     )
+    subway = "Ⓜ️Метро: "
     caption_money = f"💳️{money} грн"
     caption_user = f"{caption_header}\n\nОпис: {caption_text}"
     caption_tag = f"#{count_room}ККВ #{teg_money}"
@@ -301,14 +158,17 @@ def create_pieces_caption(soup: BeautifulSoup) -> [str, str, str, str]:
         f"\n\nЗв'язок тут:\n" f"Написати ✍️ @realtor_057\n" f"Подзвонити ☎️ +380996643097"
     )
 
-    return caption_info, caption_money, caption_user, caption_tag, caption_communication
+    return caption_info, caption_money, caption_user, caption_tag, caption_communication, subway
 
 
 def get_full_caption(
-    caption_info, caption_money, caption_user, caption_tag, caption_communication
+    caption_info, caption_money, caption_user, caption_tag, caption_communication, subway
 ):
+    print(subway)
+    print(caption_tag)
     return (
         f"{caption_info}"
+        f"{subway}\n"
         f"{caption_money}"
         f"\n\n{caption_user}\n\n"
         f"{caption_tag}"
@@ -318,32 +178,27 @@ def get_full_caption(
 
 # Отримання тегу залежно від ціни
 def get_tags_for_money(price):
-    if 2000 <= price <= 5000:
-        return "20005000грн"
-    elif 5000 <= price <= 7000:
-        return "50007000грн"
-    elif 7000 <= price <= 9000:
-        return "70009000грн"
-    elif 9000 <= price <= 12000:
-        return "900012000грн"
-    elif 12000 <= price <= 14000:
-        return "1200014000грн"
-    elif 14000 <= price <= 15000:
-        return "1400015000грн"
-    elif price >= 15000:
-        return "Выше15000грн"
+    match price:
+        case price if price in range(0, 2000): return "нижче2000грн"
+        case price if price in range(2000, 5000): return "20005000грн"
+        case price if price in range(5000, 7000): return "50007000грн"
+        case price if price in range(7000, 9000): return "70009000грн"
+        case price if price in range(9000, 12000): return "900012000грн"
+        case price if price in range(12000, 14000): return "1200014000грн"
+        case price if price in range(14000, 15000): return "1400015000грн"
+        case price if price >= 15000: return "Выше15000грн"
 
 
 # Отримання всіх даних і запуск надсилання
 async def get_data(message: types.Message, state: FSMContext):
     soup: BeautifulSoup = get_url(message.text)
-    (caption_info, caption_money, caption_user, caption_tag, caption_communication) = (
-        create_pieces_caption(soup)
-    )
+    (caption_info, caption_money, caption_user, caption_tag, caption_communication, subway) = create_pieces_caption(soup)
+
 
     all_caption = get_full_caption(
-        caption_info, caption_money, caption_user, caption_tag, caption_communication
+        caption_info, caption_money, caption_user, caption_tag, caption_communication, subway
     )
+
     all_photo, first_photo = get_photo(soup, all_caption)
     # storage of the necessary files
 
@@ -356,6 +211,7 @@ async def get_data(message: types.Message, state: FSMContext):
         caption_user=caption_user,
         caption_tag=caption_tag,
         caption_communication=caption_communication,
+        subway=subway
     )
 
     await message.answer_photo(

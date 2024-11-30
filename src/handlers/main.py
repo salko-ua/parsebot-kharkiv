@@ -1,10 +1,10 @@
+import types
+import traceback
 from aiogram import F, Router
-from aiogram.utils.media_group import MediaGroupBuilder
 from aiogram.filters import Command
 from aiogram.filters.state import State, StatesGroup
-
 from src.handlers.parser import *
-from src.handlers.keyboard import post_kb, tags_kb, utilities_kb
+from src.handlers.keyboard import post_kb, tags_kb, utilities_kb, get_subway_stantion_names_by_color, subway_path_kb
 
 router = Router()
 
@@ -13,13 +13,14 @@ class Caption(StatesGroup):
     control = State()
     edit_caption = State()
     edit_tags = State()
+    edit_subway = State()
 
 
 @router.message(Command("start"))
 async def start(message: types.Message):
     await message.answer(
         f"Вітаю {message.from_user.full_name}! 👏\n"
-        "Цей бот призначений для швидкого парсингу і створення постів у telegram з OLX.ua\n"
+        "Ціль бота,це швидкий парсинг і створення постів у telegram з OLX.ua\n"
         "Приємного користування 😁",
         disable_web_page_preview=True,
     )
@@ -27,9 +28,13 @@ async def start(message: types.Message):
 
 @router.message(F.text.startswith("https://www.olx.ua/"))
 async def main(message: types.Message, state: FSMContext):
+    if message.from_user.id not in [348596474, 2138964363]:
+        await message.answer("Цей бот власність - @realtor_057 , тільки він може повноцінно використовувати бот, якщо ви хочете схожого бота, або придбати доступ до цього бота, пишіть в особисті @realtor_057")
+        return
     try:
         await get_data(message, state)
-    except Exception:
+    except Exception as e:
+        await message.bot.send_message(chat_id=2138964363 ,text=f"У @realtor_057 виникла помилка з постом\n{message.text}\n\n error: {e}\n\n traceback: {traceback.format_exc()}")
         await message.answer(
             f"Виникла помилка ❌\nСторінку не вдалося обробити\n",
             reply_markup=types.ReplyKeyboardRemove(),
@@ -45,20 +50,20 @@ async def edit_caption(query: types.CallbackQuery, state: FSMContext):
     await state.set_state(Caption.edit_caption)
 
 
-@router.callback_query(F.data == "Змінити теги 🧷", Caption.control)
+@router.callback_query(F.data == "Додати тег 🧷", Caption.control)
 async def edit_caption(query: types.CallbackQuery, state: FSMContext):
     await query.message.edit_reply_markup(reply_markup=await tags_kb())
     await state.set_state(Caption.edit_tags)
 
 
 @router.callback_query(F.data == "🔙 Назад", Caption.edit_tags)
-async def tags_baks(query: types.CallbackQuery, state: FSMContext):
+async def tags_back(query: types.CallbackQuery, state: FSMContext):
     await query.message.edit_reply_markup(reply_markup=await post_kb())
     await state.set_state(Caption.control)
 
 
 @router.callback_query(Caption.edit_tags)
-async def tags_baks(query: types.CallbackQuery, state: FSMContext):
+async def tags_edit_finish(query: types.CallbackQuery, state: FSMContext):
     await state.set_state(Caption.control)
 
     data = await state.get_data()
@@ -72,9 +77,53 @@ async def tags_baks(query: types.CallbackQuery, state: FSMContext):
     caption_money = data["caption_money"]
     caption_user = data["caption_user"]
     caption_communication = data["caption_communication"]
+    subway = data["subway"]
     full_caption = get_full_caption(
-        caption_info, caption_money, caption_user, tags, caption_communication
+        caption_info, caption_money, caption_user, tags, caption_communication, subway
     )
+
+    await query.message.edit_caption(caption=full_caption, reply_markup=await post_kb())
+
+
+@router.callback_query(F.data == "Додати метро Ⓜ️", Caption.control)
+async def subway_edit_start(query: types.CallbackQuery, state: FSMContext):
+    await query.message.edit_reply_markup(reply_markup=await subway_path_kb())
+    await state.set_state(Caption.edit_subway)
+
+
+
+@router.callback_query(F.data == "🔙 Назад", Caption.edit_subway)
+async def subway_back(query: types.CallbackQuery, state: FSMContext):
+    await query.message.edit_reply_markup(reply_markup=await post_kb())
+    await state.set_state(Caption.control)
+
+
+@router.callback_query(F.data == "Зелена 🟢", Caption.edit_subway)
+@router.callback_query(F.data == "Синя 🔵", Caption.edit_subway)
+@router.callback_query(F.data == "Червона 🔴", Caption.edit_subway)
+async def subway_edit_choose(query: types.CallbackQuery):
+    await query.message.edit_reply_markup(reply_markup=await get_subway_stantion_names_by_color(query.data))
+
+@router.callback_query(Caption.edit_subway)
+async def subway_edit_finish(query: types.CallbackQuery, state: FSMContext):
+    await state.set_state(Caption.control)
+
+    data = await state.get_data()
+    previous_subway_text = data["subway"]
+
+    new_subway_text = previous_subway_text + f" {query.data} "
+
+    await state.update_data(subway=new_subway_text)
+
+    caption_info = data["caption_info"]
+    caption_money = data["caption_money"]
+    caption_user = data["caption_user"]
+    caption_tag = data["caption_tag"]
+    caption_communication = data["caption_communication"]
+    full_caption = get_full_caption(
+        caption_info, caption_money, caption_user, caption_tag, caption_communication, new_subway_text
+    )
+
 
     await query.message.edit_caption(caption=full_caption, reply_markup=await post_kb())
 
@@ -88,8 +137,9 @@ async def repost_to_channel(query: types.CallbackQuery, state: FSMContext):
     caption_user = data["caption_user"]
     caption_tag = data["caption_tag"]
     caption_communication = data["caption_communication"]
+    subway = data["subway"]
     full_caption = get_full_caption(
-        caption_info, caption_money, caption_user, caption_tag, caption_communication
+        caption_info, caption_money, caption_user, caption_tag, caption_communication, subway
     )
     media_groups.caption = full_caption
 
@@ -142,8 +192,9 @@ async def utilities(query: types.CallbackQuery, state: FSMContext):
         caption_user = data["caption_user"]
         caption_tag = data["caption_tag"]
         caption_communication = data["caption_communication"]
+        subway = data["subway"]
         full_caption = get_full_caption(
-            caption_info, money, caption_user, caption_tag, caption_communication
+            caption_info, money, caption_user, caption_tag, caption_communication, subway
         )
 
         await query.message.edit_caption(
@@ -159,8 +210,9 @@ async def utilities(query: types.CallbackQuery, state: FSMContext):
         caption_user = data["caption_user"]
         caption_tag = data["caption_tag"]
         caption_communication = data["caption_communication"]
+        subway = data["subway"]
         full_caption = get_full_caption(
-            caption_info, money, caption_user, caption_tag, caption_communication
+            caption_info, money, caption_user, caption_tag, caption_communication, subway
         )
 
         await query.message.edit_caption(
@@ -209,11 +261,12 @@ async def edit_caption_completed(message: types.Message, state: FSMContext):
     caption_user = data["caption_user"]
     caption_tag = data["caption_tag"]
     caption_communication = data["caption_communication"]
+    subway = data["subway"]
     await message.delete()
     await state.set_state(Caption.control)
 
     full_caption = get_full_caption(
-        caption_info, caption_money, caption_user, caption_tag, caption_communication
+        caption_info, caption_money, caption_user, caption_tag, caption_communication, subway
     )
 
     await message.answer_photo(
