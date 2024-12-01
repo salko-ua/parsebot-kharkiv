@@ -149,8 +149,9 @@ def create_pieces_caption(soup: BeautifulSoup) -> [list[str]]:
         f"🏡{count_room}к кв\n"
         f"🏢Поверх: {flour}\n"
         f"🔑Площа: {count_area}м2\n"
+        "Ⓜ️Метро: "
     )
-    subway = "Ⓜ️Метро: "
+    subway = ""
     caption_money = f"💳️{money} грн"
     caption_user = f"{caption_header}\n\nОпис: {caption_text}"
     caption_tag = f"#{count_room}ККВ #{teg_money}"
@@ -164,8 +165,6 @@ def create_pieces_caption(soup: BeautifulSoup) -> [list[str]]:
 def get_full_caption(
     caption_info, caption_money, caption_user, caption_tag, caption_communication, subway
 ):
-    print(subway)
-    print(caption_tag)
     return (
         f"{caption_info}"
         f"{subway}\n"

@@ -5,6 +5,7 @@ from aiogram.filters import Command
 from aiogram.filters.state import State, StatesGroup
 from src.handlers.parser import *
 from src.handlers.keyboard import post_kb, tags_kb, utilities_kb, get_subway_stantion_names_by_color, subway_path_kb
+from src.utilities import delete_exist_name_in_str, check_is_exist_name_to_delete
 
 router = Router()
 
@@ -67,11 +68,13 @@ async def tags_edit_finish(query: types.CallbackQuery, state: FSMContext):
     await state.set_state(Caption.control)
 
     data = await state.get_data()
-    tags = data["caption_tag"]
+    previous_tags = data["caption_tag"]
+    if not await check_is_exist_name_to_delete(previous_tags, "#"+query.data):
+        new_tags = previous_tags + f" #{query.data}"
+    else:
+        new_tags = await delete_exist_name_in_str(previous_tags, "#"+query.data)
 
-    tags = tags + f" #{query.data} "
-
-    await state.update_data(caption_tag=tags)
+    await state.update_data(caption_tag=new_tags)
 
     caption_info = data["caption_info"]
     caption_money = data["caption_money"]
@@ -79,7 +82,7 @@ async def tags_edit_finish(query: types.CallbackQuery, state: FSMContext):
     caption_communication = data["caption_communication"]
     subway = data["subway"]
     full_caption = get_full_caption(
-        caption_info, caption_money, caption_user, tags, caption_communication, subway
+        caption_info, caption_money, caption_user, new_tags, caption_communication, subway
     )
 
     await query.message.edit_caption(caption=full_caption, reply_markup=await post_kb())
@@ -111,7 +114,11 @@ async def subway_edit_finish(query: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     previous_subway_text = data["subway"]
 
-    new_subway_text = previous_subway_text + f" {query.data} "
+    if not await check_is_exist_name_to_delete(previous_subway_text, query.data):
+        new_subway_text = previous_subway_text + f" {query.data}"
+    else:
+        new_subway_text = await delete_exist_name_in_str(previous_subway_text, query.data)
+
 
     await state.update_data(subway=new_subway_text)
 
