@@ -7,7 +7,8 @@ WORKDIR /root
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN apt-get update && \
     apt-get install curl -y --no-install-recommends && \
-    curl -sSL https://install.python-poetry.org | python -
+    curl -sSL https://install.python-poetry.org | python - && \
+    poetry self add poetry-plugin-export
 COPY poetry.lock pyproject.toml ./
 RUN poetry export --no-interaction -o requirements.txt --without-hashes --only main,docker
 
