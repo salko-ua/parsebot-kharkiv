@@ -47,7 +47,7 @@ def get_tag(soup: BeautifulSoup) -> [int, int, str]:
         "Поверховість:",
     ]
     # parsing tags from the page
-    tags = self.soup.find("div", {"data-testid": "ad-parameters-container"}).find_all("p")
+    tags = soup.find("div", {"data-testid": "ad-parameters-container"}).find_all("p")
     all_tag_text = []
 
     for need_word in NEED_WORDS_RUSSIAN:
