@@ -116,7 +116,7 @@ def get_caption(soup: BeautifulSoup) -> str:
 
 def get_header(soup: BeautifulSoup) -> str | None:
     # parsing caption from the page
-    caption_header = soup.find("h4", class_="css-10ofhqw")
+    caption_header = soup.find("h4", class_="css-1au435n")
 
     if not caption_header:
         return "Заголовок не знайдено. Повідомте розробника про помилку."
