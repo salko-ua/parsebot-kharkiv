@@ -167,6 +167,7 @@ async def repost_to_channel(query: types.CallbackQuery, state: FSMContext):
         except Exception as e:
             new_media_group.remove(media_group[i])
 
+    print(new_media_group)
     await query.message.bot.send_media_group(
         chat_id=-1001489053011, media=new_media_group
     )
