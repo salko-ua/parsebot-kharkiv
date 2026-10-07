@@ -123,7 +123,7 @@ def get_money(soup: BeautifulSoup) -> [str, str]:
 
 def get_caption(soup: BeautifulSoup) -> str:
     # parsing caption from the page
-    caption_text = soup.find("div", class_="css-fl29zg")
+    caption_text = soup.find("div", class_="css-1rkcfco")
 
     if not caption_text:
         return "Опис не знайдено. Повідомте розробника про помилку."
